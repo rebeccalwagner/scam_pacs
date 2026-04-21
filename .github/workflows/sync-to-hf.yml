@@ -17,7 +17,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           cd /tmp
-          git clone https://github.com/sarahmathey/scam_pacs.git hf_push
+          git clone https://github.com/rebeccalwagner/scam_pacs.git hf_push
           cd hf_push
           git checkout --orphan fresh
           git rm -rf .
