@@ -21,7 +21,9 @@ jobs:
           cd hf_push
           git checkout --orphan fresh
           git rm -rf .
-          git checkout main -- app.py requirements.txt Dockerfile pages/
+          git checkout main -- updated_app/
+          cp -r updated_app/* .
+          rm -rf updated_app/
           git add .
           git commit -m "sync to hugging face"
           git push -f https://rlwagner01:$HF_TOKEN@huggingface.co/spaces/rlwagner01/scam-pac-explorer fresh:main
