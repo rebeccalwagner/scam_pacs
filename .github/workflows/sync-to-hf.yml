@@ -19,6 +19,8 @@ jobs:
           cd /tmp
           git clone https://github.com/rebeccalwagner/scam_pacs.git hf_push
           cd hf_push
+          git config user.email "rebeccalwagner@users.noreply.github.com"
+          git config user.name "rebeccalwagner"
           git checkout --orphan fresh
           git rm -rf .
           git checkout main -- updated_app/
