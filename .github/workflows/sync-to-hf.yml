@@ -9,10 +9,12 @@ jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true
+      - name: Remove files not supported by Hugging Face
+        run: rm -f god_family.png racaf_fight_the_right.png sjm215_insight_report.pdf
       - name: Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
