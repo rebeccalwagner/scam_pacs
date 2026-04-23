@@ -37,29 +37,40 @@ def screenshot_card(item: dict) -> dbc.Row:
     return dbc.Row(
         dbc.Col(
             dbc.Card([
-                dbc.CardImg(
-                    src=f"/assets/{item['filename']}",
-                    top=True,
-                    style={
-                        "border-bottom": "1px solid #dee2e6",
-                    },
+
+                # ── Title + caption ABOVE image ──
+                dbc.CardHeader([
+                    html.H4(item["title"], className="mb-1 fw-semibold"),
+                    html.P(item["caption"], className="text-muted small mb-0"),
+                ]),
+
+                # ── Centered, constrained image ──
+                html.Div(
+                    dbc.CardImg(
+                        src=f"/assets/{item['filename']}",
+                        style={
+                            "maxWidth": "800px",   # constrain size
+                            "width": "100%",       # responsive scaling
+                            "margin": "0 auto",    # center horizontally
+                            "display": "block",
+                        },
+                    ),
+                    style={"textAlign": "center", "padding": "20px"},
                 ),
+
+                # ── Text BELOW image ──
                 dbc.CardBody([
-                    html.H4(item["title"], className="mb-2"),
-                    html.P(item["caption"], className="text-muted mb-3"),
-
-                    html.Hr(),  # separator line
-
                     html.P(
                         item.get("text", ""),
-                        className="mt-3",
                         style={"lineHeight": "1.6"},
                     ) if item.get("text") else None,
                 ]),
+
             ], className="shadow-sm"),
+
             width=12
         ),
-        className="mb-5"  # space between each screenshot block
+        className="mb-5"
     )
 
 
@@ -78,8 +89,6 @@ layout = dbc.Container([
     storage, Databricks, and DuckDB, the system is now scalable, shareable, 
     and reproducible.
     """, className="mb-5"),
-
-    html.H2('Background', className="mb-4"),
 
     html.Div([
     screenshot_card(item) for item in SCREENSHOTS
