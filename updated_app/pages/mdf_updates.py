@@ -1,8 +1,8 @@
 import dash
-from dash import html
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 
-dash.register_page(__name__, name="Screenshots", path="/screenshots")
+dash.register_page(__name__, name="Recent Updates", path="/Updates")
 
 # ── Screenshot metadata ───────────────────────────────────────────────────────
 # Add an entry here for each screenshot in your assets/ folder.
@@ -13,16 +13,19 @@ SCREENSHOTS = [
         "filename": "original_pipeline.png",
         "title": "Scam PAC Explorer - Original Pipeline",
         "caption": "Diagram for the original scam PAC explorer using only local resources",
+        "text": "The original explorer leveraged local compute power and random sampling to deliver an explorer that did not capture the full extent of the scam PAC network. A series of 5 Jupyter notebooks were manually executed to access the FEC API to download filings and financials, join and clean the data and create a network visualization. Then a large file was loaded into memory which required random sampling. This version is not scalable, not reproducible and not automated",
     },
     {
         "filename": "data_pipeline.png",
         "title": "Scam PAC Explorer - Updated Data Pipeline",
         "caption": "Diagram highlighting the scam PAC explorer's data pipeline leveraging cloud and distributed computing",
+        "text": "The updated data pipeline requires some manual execution to access the FEC API as the Databricks free tier does not allow external connections. Once the API is accessed manually, the files are written to Amazon S3 buckets which are read into Databricks for automated aggregation and standardization as Parquet files. These files are connected to Hugging Face through a serverless DuckDB layer that removes the need for random sampling.",
     },
     {
         "filename": "infastructure.png",
-        "title": "Scam PAC Explorer - Full Infastructure",
-        "caption": "Full infastructure for the updated scam PACs explorer including s3, Databricks, DuckDB and Hugging Face Spaces",
+        "title": "Scam PAC Explorer - Full Infrastructure",
+        "caption": "Full infrastructure for the updated scam PACs explorer including s3, Databricks, DuckDB and Hugging Face Spaces",
+        "text": "The updated infrastructure has four layers. First, the local compute layer to access the FEC API for data collection. The Amazon S3 layer holds raw and process Parquet files. The Databricks layer interacts with S3 in a read/write capacity to clean and standardize data. Finally, the public facing Dash app is located on Hugging Face Spaces which displays data through the serverless DuckDB. Journalists, activits and others are welcome to explore the network of PACs to research potential scam PACS.",
     },
     # Add more screenshots here as needed
 ]
@@ -44,6 +47,12 @@ def screenshot_card(item: dict) -> dbc.Col:
             dbc.CardBody([
                 html.H5(item["title"], className="card-title"),
                 html.P(item["caption"], className="card-text text-muted"),
+
+            # NEW: optional descriptive text
+                html.P(
+                    item.get("text", ""),  # safely handle missing text
+                    className="card-text",
+                ) if item.get("text") else None,
             ]),
         ],
         className="h-100 shadow-sm",
@@ -54,22 +63,26 @@ def screenshot_card(item: dict) -> dbc.Col:
 
 
 # ── Page layout ───────────────────────────────────────────────────────────────
-
 layout = dbc.Container([
 
-    dbc.Row(
-        dbc.Col([
-            html.H2("App Screenshots", className="mt-4 mb-1"),
-            html.P(
-                "A visual walkthrough of the Scam PAC Explorer interface.",
-                className="text-muted mb-4",
-            ),
-            html.Hr(),
-        ])
-    ),
+    # Header at very top
+    html.H1('Recent Updates', className="mb-4"),
+
+    dcc.Markdown("""
+    The original scam PAC explorer was built using only local compute resources 
+    which limited the ability to truly explore all 7,157 PACs from the 2023-2024 
+    election cycle through forced random sampling.
+
+    By updating the infrastructure and data pipelines to leverage Amazon S3 
+    storage, Databricks, and DuckDB, the system is now scalable, shareable, 
+    and reproducible.
+    """, className="mb-5"),
+
+    html.H2('Background', className="mb-4"),
 
     dbc.Row(
         [screenshot_card(item) for item in SCREENSHOTS],
+        className="g-4",  # nicer spacing between cards
     ),
 
 ], fluid=True)
